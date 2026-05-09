@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTasks, createTask, updateTask, deleteTask } from '../services/api';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
-import { LayoutList, Activity } from 'lucide-react';
+import { LayoutList, Activity, LogOut } from 'lucide-react';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,16 +61,31 @@ const Dashboard = () => {
   const inProgressCount = tasks.filter(t => t.status === 'in-progress').length;
   const completedCount = tasks.filter(t => t.status === 'completed').length;
 
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    navigate('/login');
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="bg-primary/10 p-3 rounded-2xl">
-          <LayoutList className="w-8 h-8 text-primary" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/10 p-3 rounded-2xl">
+            <LayoutList className="w-8 h-8 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Task Sheet</h1>
+            <p className="text-gray-500 mt-1">Manage your daily tasks and productivity</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Task Sheet</h1>
-          <p className="text-gray-500 mt-1">Manage your daily tasks and productivity</p>
-        </div>
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
